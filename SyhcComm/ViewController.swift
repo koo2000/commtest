@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var button: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -21,5 +22,45 @@ class ViewController: UIViewController {
     }
 
 
+    @IBAction func buttonClicked(_ sender: Any) {
+        print("hoge")
+
+        dourl()
+//        queue.async {
+//            let url = NSURL(fileURLWithPath: "https://github.com")
+//        }
+    }
+    
+    func dourl() {
+        var queue = DispatchQueue(label: "jp.classmethod.app.queue")
+        queue.async() {
+            let semapho = DispatchSemaphore(value: 0)
+            print("enter?")
+            print("enter!")
+                print("async2")
+
+                let requestURL: URL = URL(string: "https://github.com")!
+                let request: NSMutableURLRequest = NSMutableURLRequest(url: requestURL)
+                
+                var task = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { data, response, error in
+                    if (error == nil) {
+                        print("success!!")
+                        print(response)
+                    } else {
+                        print("error occur!!")
+                        print(error)
+                    }
+                    print("end")
+                    semapho.signal()
+                })
+                print("fuga")
+                task.resume()
+                print("resumed")
+            print("wait?")
+            semapho.wait()
+            print("end2")
+        }
+
+    }
 }
 
